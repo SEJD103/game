@@ -4,9 +4,10 @@ from random import randint, choice
 # thisc is an attempt at having a room system in place.
 
 class Room():
-    def __init__ (self):
-        roomnum = roomnum
-        roomname = roomname
+    def __init__ (self,name,number):
+        self.roomnum = number
+        self.roomname = name
+
 
 terrain = []
 a = 25
@@ -21,9 +22,9 @@ while a > 0:
     random_terrain.remove (room1)
     a -= 1
     terrain.append(room1)
+name = terrain[2]
 
-
-
+current_room=Room("cool cave",2)
 
 
 
@@ -46,16 +47,18 @@ class Player (LivingThing):
         self.name = name
         self.health = 15
         self.status = "regular"
-
+# this function will print all the availible commands
     def help(self,monster):
         print ('Your choices are:')
         for key in Commands.keys():
             print(key)
+# this function will show the player various stats i.e. player name, monster health etc.
     def stats(self,monster):
         print("you are", self.name)
         print("with health of", self.health)
         print("your status is", self.status)
         print(monster.name , "health is", monster.health)
+# this function will be removed soon
     def explore(self,monster):
         self.heal()
         print("your health is now", self.health)
@@ -63,6 +66,7 @@ class Player (LivingThing):
             print(monster.name, "confronts you")
             print("what do you want to do?")
             self.status = "confronted"
+# this function allows you to fight the monster if the monster has confronted you.
     def fight(self,monster):
         if self.status == "confronted":
             self.hurt()
@@ -78,8 +82,7 @@ class Player (LivingThing):
                 print("victory! You defeated the", monster.name)
         else:
             print("you are safe. There are no monsters near")
-
-           
+# im going to remove this it is stupid
     def run(self,monster):
         if randint (0, self.health) < randint(0, monster.health):
             print("a monster has appeared")
@@ -90,86 +93,82 @@ class Player (LivingThing):
             monster.heal()
             print ("your health suffered from you running")
             print ("your health is now", self.health)
-# hopefully you can navigate around the map with this command
+# hopefully you can navigate around the map with these commands
     def north(self,monster):
-        global roomnum
-        global roomname
-        if roomnum == 0:
+        global current_room
+        if current_room.roomnum == 0:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
-        elif roomnum == 1:
+        elif current_room.roomnum == 1:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
-        elif roomnum == 2:
+        elif current_room.roomnum == 2:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
-        elif roomnum == 3:
+        elif current_room.roomnum == 3:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
-        elif roomnum == 4:
+        elif current_room.roomnum == 4:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
         else:
-            roomnum -= 5
-            roomname = terrain[roomnum]
-            
-            
-            print("you have travelled to the north, where you come to", roomname )
+            current_room.roomnum -= 5
+            current_room.roomname = terrain[current_room.roomnum]
 
+
+            print("you have travelled to the north, where you come to", current_room.roomname )
+# this is the same thing as north, but instead of going in an "upwards" direction, you travel towards the right of the map
     def east(self,monster):
-        global roomnum
-        global roomname
-        if roomnum == 4:
+
+        if current_room.roomnum == 4:
             print ("there is an unimaginable barrier in your way, preventing you from moving east")
-        elif roomnum == 9:
+        elif current_room.roomnum == 9:
             print ("there is an unimaginable barrier in your way, preventing you from moving east")
-        elif roomnum == 14:
+        elif current_room.roomnum == 14:
             print ("there is an unimaginable barrier in your way, preventing you from moving east")
-        elif roomnum == 19:
+        elif current_room.roomnum == 19:
             print ("there is an unimaginable barrier in your way, preventing you from moving east")
-        elif roomnum == 24:
+        elif current_room.roomnum == 24:
             print ("there is an unimaginable barrier in your way, preventing you from moving east")
         else:
-            roomnum += 1
-            roomname = terrain[roomnum]
-            
+            current_room.roomnum += 1
+            current_room.roomname = terrain[current_room.roomnum]
 
-            print("you travel to the east, and you come across", roomname)
-            
+
+            print("you travel to the east, and you come across", current_room.roomname)
+# this function takes the player towards the left of the map
     def south(self,monster):
-        global roomnum
-        global roomname
-        if roomnum == 20:
+
+        if current_room.roomnum == 20:
             print ("there is an unimaginable barrier in your way, preventing you from moving south")
-        elif roomnum == 21:
+        elif current_room.roomnum == 21:
             print ("there is an unimaginable barrier in your way, preventing you from moving south")
-        elif roomnum == 22:
+        elif current_room.roomnum == 22:
             print ("there is an unimaginable barrier in your way, preventing you from moving south")
-        elif roomnum == 23:
+        elif current_room.roomnum == 23:
             print ("there is an unimaginable barrier in your way, preventing you from moving south")
-        elif roomnum == 24:
+        elif current_room.roomnum == 24:
             print ("there is an unimaginable barrier in your way, preventing you from moving south")
         else:
-            roomnum += 5
-            roomname = terrain[roomnum]
-            
+            current_room.roomnum += 5
+            current_room.roomname = terrain[current_room.roomnum]
 
-            print("you travel south, not resting until", roomname," appears in the distance")
 
+            print("you travel south, not resting until", current_room.roomname," appears in the distance")
+# this function will take you towards the bottom of the map
     def west(self,monster):
-        global roomnum
-        global roomname
-        if roomnum == 0:
+
+        if current_room.roomnum == 0:
             print ("there is an unimaginable barrier in your way, preventing you from moving west")
-        elif roomnum == 5:
+        elif current_room.roomnum == 5:
             print ("there is an unimaginable barrier in your way, preventing you from moving west")
-        elif roomnum == 10:
+        elif current_room.roomnum == 10:
             print ("there is an unimaginable barrier in your way, preventing you from moving west")
-        elif roomnum == 15:
+        elif current_room.roomnum == 15:
             print ("there is an unimaginable barrier in your way, preventing you from moving west")
-        elif roomnum == 20:
+        elif current_room.roomnum == 20:
             print ("there is an unimaginable barrier in your way, preventing you from moving north")
         else:
-             roomnum -= 1
-             roomname = terrain[roomnum ]
-             
-             
-             print("you travel west, towrds", roomname,"and reach it before night")
+            current_room.roomnum -= 1
+            current_room.roomname = terrain[current_room.roomnum ]
+
+
+            print("you travel west, towrds", current_room.roomname,"and reach it before night")
 
 
 # This is the monster class
@@ -200,9 +199,11 @@ Commands = {
 
 goblin=Monster("Goblin",20)
 dragon=Monster("Dragon",10)
+kraken=Monster("Kraken",15)
 monsters = []
 monsters.append(goblin)
 monsters.append(dragon)
+monsters.append(kraken)
 monster = choice(monsters)
 
 
@@ -216,7 +217,3 @@ while hero.health > 0 and monster.health > 0:
         Commands[line] (hero,monster)
     else:
         print (hero.name, "does not understand this suggestion.")
-
-
-
-print("Game Over")
