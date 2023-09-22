@@ -1,0 +1,349 @@
+from random import randint, choice
+
+#i want to print a message right at the start of my game
+print(
+ "Welcome to the\n"
+"██╗      █████╗ ██████╗ ██╗   ██╗██████╗ ██╗███╗  ██╗████████╗██╗  ██╗      █████╗ ███████╗\n"
+"██║     ██╔══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗██║████╗ ██║╚══██╔══╝██║  ██║     ██╔══██╗██╔════╝\n"
+"██║     ███████║██████╦╝ ╚████╔╝ ██████╔╝██║██╔██╗██║   ██║   ███████║     ██║  ██║█████╗  \n"
+"██║     ██╔══██║██╔══██╗  ╚██╔╝  ██╔══██╗██║██║╚████║   ██║   ██╔══██║     ██║  ██║██╔══╝  \n"
+"███████╗██║  ██║██████╦╝   ██║   ██║  ██║██║██║ ╚███║   ██║   ██║  ██║     ╚█████╔╝██║     \n"
+"╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚══╝   ╚═╝   ╚═╝  ╚═╝      ╚════╝ ╚═╝     \n"
+"\n"
+"██╗     ███████╗ ██████╗ ███████╗███╗  ██╗██████╗  ██████╗\n"
+"██║     ██╔════╝██╔════╝ ██╔════╝████╗ ██║██╔══██╗██╔════╝\n"
+"██║     █████╗  ██║   ██╗ █████╗ ██╔██╗██║██║  ██║╚█████╗ \n"
+"██║     ██╔══╝  ██║  ╚██╗██╔══╝  ██║╚████║██║  ██║ ╚═══██╗\n"
+"███████╗███████╗╚██████╔╝███████╗██║ ╚███║██████╔╝██████╔╝\n"
+"╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚═╝  ╚══╝╚═════╝ ╚═════╝ \n"
+)
+
+# Super class for all living things
+class LivingThing():
+    def __init__ (self):
+        self.name = "some name"
+        self.health = 1
+    def hurt(self):
+        self.health = self.health - randint (0,self.health)
+    def regen(self):
+        self.health = self.health + 1
+    
+
+# this is an attempt at having a room system in place.
+class Room():
+    def __init__ (self,name,number):
+        self.roomnum = number
+        self.roomname = name
+
+#this is an attempt at an item class
+class item():
+    def __init__ (name, dmg, value, uses):
+        name = ""
+        dmg = 0
+        value = "0 gold"
+        uses = "infinite"
+
+# This is the monster class
+class Monster (LivingThing):
+    def __init__ (self,name,health):
+        self.name = name
+        self.health = health 
+    
+
+#this will decide which boss the player will eventually fight
+goblin=Monster("Goblin",25)
+dragon=Monster("Dragon",30)
+kraken=Monster("Kraken",20)
+monsters = []
+monsters.append(goblin)
+monsters.append(dragon)
+monsters.append(kraken)
+monster = choice(monsters)
+
+
+# this will make the rooms different every time the game is played
+random_terrain = ["forest", "dark caves", "waterfall", "time ravaged village", "rock slab", "dense bushes", "clearing","glittering glade",
+"amethyst cliffs","sandy shores","abandoned mines","rocky mountain","field","flower garden","buried chest","BattleDex's house",
+"TRVSG's house","Coda's house","mysterious well","graveyard",monster.name+"'s hideout","toadstool garden","friendly elf traders",
+"shrine to foreign gods","hollow tree","sandy beach"]
+# this is a loop to create a random arrangement of the rooms every time the game is played
+# I also defined some random variables
+explored = ["","","","","","","","","","","","","","","","","","","","","","","","",""]
+terrain = []
+a = 25
+roomnum = 2
+while a > 0:
+    room1 = (random_terrain[randint(0,a)])
+    random_terrain.remove (room1)
+    a -= 1
+    terrain.append(room1)
+name = terrain[2]
+current_room=Room("",2)
+
+# This is the Player's class. Maybe I can let player choose different classes?
+class Player (LivingThing):
+    def __init__ (self,name):
+        self.name = name
+        self.health = 25
+        self.status = "regular"
+        self.gold = 0
+        self.inv_healpotion = 1
+        self.inv_dmgpotion = 0
+        self.roomnum = 2
+        self.roomname = terrain[self.roomnum]
+        self.status_effect = ""
+        self.status_effect_neg = ""
+        self.dmg = 4
+        self.flag = 0
+
+# this function will print all the availible commands
+    def help(self,monster):
+        print ('Your choices are:')
+        for key in Commands.keys():
+            print(key)
+
+# I added a healing potion, and ways to find them while exploring
+    def heal(self,monster):                                                    
+            if self.inv_healpotion > 0:
+                self.health = self.health + 3
+                self.inv_healpotion = self.inv_healpotion - 1
+                print (self.inv_healpotion, "potion/s left, health = ", self.health)
+            else: print("no healing potions in inventory")
+
+#I added a double damage potion
+    def damageboost(self,monster):
+        if self.inv_dmgpotion > 0:
+            self.dmg += 2
+            self.inv_dmgpotion -= 1
+            print("+3 damage permanently")
+            print("you have",self.inv_dmgpotion,"damage boosts remaining")
+        else:
+            print("you do not posses any damage boost potions")
+
+# I added an inventory function, so a player can see how many healing potions, gold pieces and magical items they have
+    def inventory(self, monster):
+        print ("you have",self.gold, "gold")
+        print ("you have",self.inv_healpotion, "healing potions")
+        print ("you have",self.inv_dmgpotion, "damage boosts")
+
+# this function will show the player various stats i.e. player name, monster health etc.
+    def stats(self,monster):
+        print("you are", self.name)
+        print("with health of", self.health)
+        print("you have",self.dmg,"damage")
+        print("your status is", self.status)
+        print(monster.name , "health is", monster.health)
+
+    def explore(self,monster):
+# I added a bit of code to stop the player being able to explore when confronted
+        if self.status == "confronted":
+            print("you cannot explore this area right now, you are in combat!") 
+        else:
+            
+            rand = randint (0,4)
+            if current_room.roomname == monster.name+"'s hideout":
+                print("you have stumbled upon the",monster.name,". you can no longer leave, and it will not stop attacking you"+
+                      " until it is dead, or you flee")
+                self.status = "confronted"
+                explored[current_room.roomnum] = 0
+
+            elif explored[current_room.roomnum] == 1:
+                print("you have already explored this place")
+
+            elif rand == 0 :
+                print("you explore the ", terrain[current_room.roomnum],"and find a cool looking potion")
+                self.inv_healpotion += 1
+                print("+ 1 healing potion")
+            elif rand == 1:
+                print("you explore the ", terrain[current_room.roomnum],"and find a scary potion, red and bubbling")
+                self.inv_dmgpotion += 1
+                print("+1 damage boost potion. to use, type damageboost")
+            elif rand == 2:
+                print("you explore the ", terrain[current_room.roomnum],"and a cute rabbit pops out of the shadows")
+                print("wow, what a cute bunny!")
+                answer = input("do you want to hurt the bunny? y/n >> ")
+                while True:
+                    if answer == "y":
+                        print("you should learn not to attack innocent creatures. the bunny spins on its heel, kicking you in the jugular with its razor sharp back left foot claws,"+
+                            " killing you instantly")
+                        self.health = 0
+                        break
+                    elif answer == "n":
+                        self.health += 5
+                        print("Good job. Animal cruelty is bad. +5 health")
+                        print("your health is now", self.health)
+                        break
+                    else:
+                        print("at least you did not hurt the bunny, but try again.")
+                        answer = input("do you want to hurt the bunny? y/n >> ")
+            elif rand == 3 or rand == 4:
+                print("you explore the", terrain[current_room.roomnum],"but you find nothing of use")
+
+        explored [current_room.roomnum] = 1
+            
+# this function allows you to fight the monster if the monster has confronted you.
+    def fight(self,monster):
+        if self.status == "confronted":
+            if monster.name == "Dragon":
+                self.health -= randint(2,7)
+                print("the Dragon roars and whips its head towards you, flames errupting from its maw")
+                print("your health is now",self.health)
+                self.health -= 2
+                print("the flames burn your flesh further, you now are on", self.health,"health")
+            if monster.name == "Kraken":
+                self.health -= randint (2,5)
+                print ("the Kraken is surrounded by waves, and a tentacle comes up out of the waves and crashes into you")
+                if randint(0,1) == 1:
+                    print("the tentacles pull you under the waves, half drowning you before you can resurface. you will now fight "+
+                          "with half damage for two turns, until you recover your breath")
+                    self.status_effect = "half dmg"
+                    self.flag = 2
+                print("your health is now", self.health)
+                
+            if monster.name == "Goblin":
+                self.health -= randint(3,9)
+                print("the Goblin is crafty, and sneaks behind you to throw a rock at your head.")
+
+            if self.flag > 0:
+                half_dmg = int(self.dmg /2)
+                monster.health -= (half_dmg)
+                print("the monster has ",monster.health,"health remaining")
+                self.flag -= 1
+            else:
+                monster.health -= self.dmg
+                print("the monster has ",monster.health,"health remaining")
+            
+                    
+            
+
+# i changed the run command to automatically hurt you but you also escape automatically
+    def run(self,monster):
+        rand = randint(0,4)
+        if self.status == "confronted": 
+            if rand == 0:
+                self.health -= randint(1,5)
+                if rand == 1:
+                    self.health -= randint(1,5)
+                print("you are lucky, and survive without damage")
+            elif rand == 2:
+                self.health -= randint(5,10)
+                print("the",monster.name,"attacks you as you run and hurts you. You now have",self.health,"health remaining")
+            elif rand == 3:
+                self.health -= randint(5,10)
+                print("the",monster.name,"attacks you as you run and hurts you. You now have",self.health,"health remaining")
+            elif rand == 4:
+                self.health -= randint(11,14)
+                print("the",monster.name,"attacks you as you run and hurts you. You now have",self.health,"health remaining")
+            self.status = "normal"
+        else:
+            print("you cannot run from nothing...")
+        
+
+# hopefully you can navigate around the map with these commands
+    def north(self,monster):
+        global current_room
+        if current_room.roomnum == 0:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        elif current_room.roomnum == 1:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        elif current_room.roomnum == 2:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        elif current_room.roomnum == 3:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        elif current_room.roomnum == 4:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        else:
+            current_room.roomnum -= 5
+            current_room.roomname = terrain[current_room.roomnum]
+            print("you have travelled to the north, where you come to", current_room.roomname )
+
+# this is the same thing as north, but instead of going in an "upwards" direction, you travel towards the right of the map
+    def east(self,monster):
+
+        if current_room.roomnum == 4:
+            print ("there is an unimaginable barrier in your way, preventing you from moving east")
+        elif current_room.roomnum == 9:
+            print ("there is an unimaginable barrier in your way, preventing you from moving east")
+        elif current_room.roomnum == 14:
+            print ("there is an unimaginable barrier in your way, preventing you from moving east")
+        elif current_room.roomnum == 19:
+            print ("there is an unimaginable barrier in your way, preventing you from moving east")
+        elif current_room.roomnum == 24:
+            print ("there is an unimaginable barrier in your way, preventing you from moving east")
+        else:
+            current_room.roomnum += 1
+            current_room.roomname = terrain[current_room.roomnum]
+            print("you travel to the east, and you come across", current_room.roomname)
+
+# this function takes the player towards the left of the map
+    def south(self,monster):
+
+        if current_room.roomnum == 20:
+            print ("there is an unimaginable barrier in your way, preventing you from moving south")
+        elif current_room.roomnum == 21:
+            print ("there is an unimaginable barrier in your way, preventing you from moving south")
+        elif current_room.roomnum == 22:
+            print ("there is an unimaginable barrier in your way, preventing you from moving south")
+        elif current_room.roomnum == 23:
+            print ("there is an unimaginable barrier in your way, preventing you from moving south")
+        elif current_room.roomnum == 24:
+            print ("there is an unimaginable barrier in your way, preventing you from moving south")
+        else:
+            current_room.roomnum += 5
+            current_room.roomname = terrain[current_room.roomnum]
+            print("you travel south, not resting until", current_room.roomname," appears in the distance")
+            
+# this function will take you towards the bottom of the map
+    def west(self,monster):
+
+        if current_room.roomnum == 0:
+            print ("there is an unimaginable barrier in your way, preventing you from moving west")
+        elif current_room.roomnum == 5:
+            print ("there is an unimaginable barrier in your way, preventing you from moving west")
+        elif current_room.roomnum == 10:
+            print ("there is an unimaginable barrier in your way, preventing you from moving west")
+        elif current_room.roomnum == 15:
+            print ("there is an unimaginable barrier in your way, preventing you from moving west")
+        elif current_room.roomnum == 20:
+            print ("there is an unimaginable barrier in your way, preventing you from moving north")
+        else:
+            current_room.roomnum -= 1
+            current_room.roomname = terrain[current_room.roomnum ]
+            print("you travel west, towards", current_room.roomname,"and reach it before night")
+
+name = input("what is your name? >> ")
+hero = Player(name)
+
+# this is my list of commands
+Commands = {
+'help' :Player.help,
+'heal' : Player.heal,
+'inventory' : Player.inventory,
+'stats' : Player.stats,
+'explore' : Player.explore,
+'run' :Player.run,
+'fight' : Player.fight,
+'north' : Player.north,
+'east' : Player.east,
+'south' : Player.south,
+"west" : Player.west,
+'damageboost' : Player.damageboost
+}
+
+print('(type help to get a list of commands) ')
+print(hero.name, "arrives at the land of legends. You will soon face the", monster.name,"that is hiding deep within the labyrinth")
+
+while hero.health > 0 and monster.health > 0:
+    line = input("What do you want to do? >> ")
+    if line in Commands.keys():
+        Commands[line] (hero,monster)
+    else:
+        print (hero.name, "does not understand this suggestion.")
+if monster.health < 0 and hero.health > 0:
+    print("you have slain the monster, and beaten the game! \nthx for playing....")
+
+
+def credits():
+    print("Game by Samson Droney\nthanks to Joss Ormes, Dexter Hart and Gabriel Mesquita for testing and helping with code issues")
+
+credits()
